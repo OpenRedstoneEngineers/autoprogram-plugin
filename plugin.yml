@@ -1,0 +1,8 @@
+name: AutoProgram
+main: org.openredstone.AutoProgram.AutoProgram
+version: 1.0
+description: >
+             Automatically program ROMs according to the contents of a text file.
+commands:
+  autoprogram:
+    description: Program ROMs.
