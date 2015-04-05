@@ -1,16 +1,17 @@
 package org.openredstone.AutoProgram;
 
+import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
+
 class BlockDef {
 	public BlockDef()
 	{
 		this.name = "";
 		this.index = 0;
-		this.blockId = 0;
-		this.metadata = 0;
 	}
 	
 	public String name;
 	public int index;
-	public int blockId;
-	public byte metadata;
+	public Material material;
+	public BlockFace face;
 }
