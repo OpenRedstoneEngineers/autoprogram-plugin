@@ -1,13 +1,12 @@
 package org.openredstone.AutoProgram;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.Hashtable;
+import java.util.Scanner;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.IOUtils;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -70,9 +69,10 @@ public class AutoProgram extends JavaPlugin implements Listener
 			
 			try
 			{
-				FileInputStream inputStream = new FileInputStream(progPath+"/"+player.getName()+"/"+args[0]+".prog");
-				String prog = IOUtils.toString(inputStream);
-				inputStream.close();
+				Scanner file = new Scanner(new File(progPath+"/"+player.getName()+"/"+args[0]+".prog"));
+				String prog = "";
+				while (file.hasNextLine()) prog += file.nextLine();
+				file.close();
 				execProgString(prog, player);
 			}
 			catch (Exception e)
