@@ -1,4 +1,4 @@
-package org.openredstone.AutoProgram;
+package org.openredstone.autoprogram;
 
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;

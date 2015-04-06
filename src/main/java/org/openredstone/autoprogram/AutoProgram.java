@@ -1,4 +1,4 @@
-package org.openredstone.AutoProgram;
+package org.openredstone.autoprogram;
 
 import java.io.File;
 import java.util.Hashtable;
