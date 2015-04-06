@@ -68,7 +68,11 @@ public class AutoProgram extends JavaPlugin implements Listener
 
 		try
 		{
-			String uuid = player.getUniqueId().toString();
+			//We strip out all dashes because the web API gives us the UUID with no dashes,
+			//and this will have to interface with software which uses the web API
+			//to get UUIDs
+			String uuid = player.getUniqueId().toString().replaceAll("-", "");
+
 			File dir = new File(progPath+"/"+uuid);
 			if (!dir.exists())
 			{
