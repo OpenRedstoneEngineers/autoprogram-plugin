@@ -66,16 +66,17 @@ public class AutoProgram extends JavaPlugin implements Listener
 			return false;
 		}
 
-		//Can't allow bad characters in player names.
-		if (!Pattern.compile("^[a-zA-Z0-9_]+$").matcher(player.getName()).find())
-		{
-			player.sendMessage("Your username contains illegal characters.");
-			return false;
-		}
-
 		try
 		{
-			Scanner file = new Scanner(new File(progPath+"/"+player.getName()+"/"+args[0]+".prog"));
+			String uuid = player.getUniqueId().toString();
+			File dir = new File(progPath+"/"+uuid);
+			if (!dir.exists())
+			{
+				logger.info("Player "+player.getName()+" doesn't have a prog file directory. Creating it.");
+				dir.mkdir();
+			}
+
+			Scanner file = new Scanner(new File(dir, args[0]+".prog"));
 			String prog = "";
 			while (file.hasNextLine()) prog += file.nextLine()+"\n";
 			file.close();
