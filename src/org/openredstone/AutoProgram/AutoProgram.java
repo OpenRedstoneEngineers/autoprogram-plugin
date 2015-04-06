@@ -1,10 +1,13 @@
 package org.openredstone.AutoProgram;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.Hashtable;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.IOUtils;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -21,12 +24,16 @@ import org.bukkit.material.Torch;
 public class AutoProgram extends JavaPlugin implements Listener
 {
 	public final Logger logger = Logger.getLogger("Minecraft");
-
-	PluginDescriptionFile descFile = this.getDescription();
+	public final PluginDescriptionFile descFile = this.getDescription();
+	private final String progPath = this.getConfig().getString("progPath");
 	
 	public void onEnable()
 	{
+		this.saveDefaultConfig();
 		logger.info(descFile.getName()+" enabled.");
+		
+		File file = new File(progPath);
+		logger.info(descFile.getName()+"'s path is: "+file.getAbsolutePath());
 	}
 	
 	public void onDisable()
@@ -46,16 +53,33 @@ public class AutoProgram extends JavaPlugin implements Listener
 		
 		if (cmd.getName().equalsIgnoreCase("autoprogram"))
 		{
+			if (args.length != 1)
+				return true;
+			
+			if (!Pattern.compile("^[a-zA-Z0-9_]+$").matcher(args[0]).find())
+			{
+				player.sendMessage("The program name contains illegal characters.");
+				return true;
+			}
+			
+			if (!Pattern.compile("^[a-zA-Z0-9_]+$").matcher(player.getName()).find())
+			{
+				player.sendMessage("Your username contains illegal characters.");
+				return true;
+			}
+			
 			try
 			{
-				execProgString(args[0], player);
+				FileInputStream inputStream = new FileInputStream(progPath+"/"+player.getName()+"/"+args[0]+".prog");
+				String prog = IOUtils.toString(inputStream);
+				inputStream.close();
+				execProgString(prog, player);
 			}
 			catch (Exception e)
 			{
 				player.sendMessage(e.getMessage());
 			}
 		}
-		
 		return false;
 	}
 	
