@@ -18,7 +18,8 @@ public class AutoProgram extends JavaPlugin implements Listener
 	public final Logger logger = Logger.getLogger("Minecraft");
 	public final PluginDescriptionFile descFile = this.getDescription();
 	private final String progPath = this.getConfig().getString("progPath");
-	
+
+	@Override
 	public void onEnable()
 	{
 		this.saveDefaultConfig();
@@ -28,11 +29,13 @@ public class AutoProgram extends JavaPlugin implements Listener
 		logger.info(descFile.getName()+"'s path is: "+file.getAbsolutePath());
 	}
 
+	@Override
 	public void onDisable()
 	{
 		logger.info(descFile.getName()+" disabled.");
 	}
 
+	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
 	{
 		if (cmd.getName().equalsIgnoreCase("autoprogram"))
