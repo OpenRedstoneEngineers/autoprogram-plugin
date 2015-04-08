@@ -6,7 +6,7 @@
 
 	<groupId>org.openredstone</groupId>
 	<artifactId>autoprogram</artifactId>
-	<version>1.0.2</version>
+	<version>1.1.0</version>
 	<name>AutoProgram</name>
 	<inceptionYear>2015</inceptionYear>
 	<url>https://github.com/OpenRedstoneEngineers/autoprogram-plugin</url>

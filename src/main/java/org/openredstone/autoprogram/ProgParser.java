@@ -250,6 +250,9 @@ class ProgParser
 			case ' ':
 				x += 1;
 				break;
+			case '$':    //Using $ to do x -= 1 is usually a bad idea, but
+				x -= 1;  //it's useful in some cases
+				break;
 			case '<':
 				z += 1;
 				break;
