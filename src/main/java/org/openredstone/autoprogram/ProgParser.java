@@ -25,11 +25,11 @@ class ProgParser
 	private Hashtable<String, BlockDef> blockDefs;
 	private int biggestIndex;
 
-	public ProgParser(String prog, Player player) throws Exception
+	public ProgParser(String prog, Player player) throws RuntimeException
 	{
 		String[] progParts = prog.split("\\|");
 		if (progParts.length != 2)
-			throw new Error("You need to supply both the defs and the world part.");
+			throw new RuntimeException("You need to supply both the defs and the world part.");
 
 		this.defsPart = progParts[0];
 		this.worldPart = progParts[1];
@@ -54,6 +54,19 @@ class ProgParser
 		this.biggestIndex = getBiggestIndex(blockDefs);
 	}
 
+	private boolean isNumeric(String str)
+	{
+		try
+		{
+			Integer.parseInt(str);
+			return true;
+		}
+		catch (Exception e)
+		{
+			return false;
+		}
+	}
+
 	private int getBiggestIndex(Hashtable<String, BlockDef> blocks)
 	{
 		int biggestIndex = 0;
@@ -65,7 +78,7 @@ class ProgParser
 		return biggestIndex;
 	}
 
-	private BlockFace rotateFace(BlockFace face, int n) throws Exception
+	private BlockFace rotateFace(BlockFace face, int n) throws RuntimeException
 	{
 		for (int i=0; i<n; ++i)
 		{
@@ -84,14 +97,14 @@ class ProgParser
 				face = BlockFace.SOUTH;
 				break;
 			default:
-				throw new Exception("That face isn't implemented.");
+				throw new RuntimeException("That face isn't implemented.");
 			}
 		}
 
 		return face;
 	}
 
-	private Hashtable<String, BlockDef> parseDefs(String defs) throws Exception
+	private Hashtable<String, BlockDef> parseDefs(String defs) throws RuntimeException
 	{
 		Hashtable<String, BlockDef> blocks = new Hashtable<String, BlockDef>();
 
@@ -99,7 +112,7 @@ class ProgParser
 		Matcher defsMatcher = Pattern.compile(
 			"([a-zA-Z0-9]+)"+      //Group 1: name
 			"=([A-Z_]+)"+          //Group 2: material name
-			"(?:\\:([A-Z_]+))?"+   //Group 3: optional: direction
+			"(?:\\:([A-Z0-9_]+))?"+   //Group 3: optional: direction/meta
 			"(?:#([0-9]+))?"       //Group 4: optional: index
 		).matcher(defs);
 		while (defsMatcher.find())
@@ -129,15 +142,17 @@ class ProgParser
 						block.face = rotateFace(direction, 2);
 					else if (dir.equals("LEFT"))
 						block.face = rotateFace(direction, 3);
+					else if (isNumeric(dir))
+						block.metadata = (byte)(Integer.parseInt(dir));
 					else
 						block.face = BlockFace.valueOf(defsMatcher.group(3));
 				}
 
 				blocks.put(block.name,  block);
 			}
-			catch (Exception e)
+			catch (RuntimeException e)
 			{
-				throw new Exception("Malformed block definition: "+defString);
+				throw new RuntimeException("Malformed block definition: "+defString);
 			}
 		}
 
@@ -146,25 +161,31 @@ class ProgParser
 
 	private void placeBlock(Block worldBlock, BlockDef block)
 	{
-		if (block.face == null)
+		if (block.face == null && block.metadata == 0)
 		{
+			System.out.println("blockface and metadata is nothing");
 			worldBlock.setType(block.material);
 		}
 		else
 		{
-			//Used to calculate the data required for rotating
-			Torch torch = new Torch();
-			torch.setFacingDirection(block.face);
-			
 			//I would prefer to do this without depreciated method and the weird torch hack,
 			//but the bukkit/spigot API seems to be buggy. If I set the block type with setType and then
 			//set the direction, attachable blocks will for some reason pop off, even if I
 			//tell setType to disable physics updates.
-			worldBlock.setTypeIdAndData(block.material.getId(), torch.getData(), true);
+			if (block.face != null)
+			{
+				Torch torch = new Torch();
+				torch.setFacingDirection(block.face);
+				worldBlock.setTypeIdAndData(block.material.getId(), torch.getData(), true);
+			}
+			else
+			{
+				worldBlock.setTypeIdAndData(block.material.getId(), block.metadata, true);
+			}
 		}
 	}
 
-	private void execIteration(int iteration) throws Exception
+	private void execIteration(int iteration) throws RuntimeException
 	{
 		//Initiate coordinates
 		int x = 0;
@@ -281,7 +302,7 @@ class ProgParser
 		}
 	}
 
-	public void exec() throws Exception
+	public void execute() throws RuntimeException
 	{
 		for (int i = 0; i <= biggestIndex; ++i)
 		{

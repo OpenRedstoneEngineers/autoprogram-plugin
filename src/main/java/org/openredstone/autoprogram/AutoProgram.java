@@ -1,6 +1,7 @@
 package org.openredstone.autoprogram;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -97,12 +98,17 @@ public class AutoProgram extends JavaPlugin implements Listener
 			file.close();
 
 			ProgParser parser = new ProgParser(prog, player);
-			parser.exec();
+			parser.execute();
 			return true;
 		}
-		catch (Exception e)
+		catch (RuntimeException e)
 		{
 			player.sendMessage(e.getMessage());
+			return false;
+		}
+		catch (FileNotFoundException e)
+		{
+			player.sendMessage("File "+args[0]+".prog doesn't exist.");
 			return false;
 		}
 	}

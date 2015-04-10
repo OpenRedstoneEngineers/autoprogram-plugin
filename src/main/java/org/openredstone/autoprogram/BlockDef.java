@@ -9,10 +9,12 @@ class BlockDef
 	public int index;
 	public Material material;
 	public BlockFace face;
+	public byte metadata;
 
 	public BlockDef()
 	{
 		this.name = "";
 		this.index = 0;
+		this.metadata = 0;
 	}
 }
