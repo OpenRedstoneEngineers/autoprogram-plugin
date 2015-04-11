@@ -163,7 +163,6 @@ class ProgParser
 	{
 		if (block.face == null && block.metadata == 0)
 		{
-			System.out.println("blockface and metadata is nothing");
 			worldBlock.setType(block.material);
 		}
 		else
